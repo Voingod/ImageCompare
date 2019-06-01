@@ -23,9 +23,15 @@ namespace TestImageCompare
                 var AllPath2 = new DirectoryInfo(path2).GetFiles();
 
                 if (AllPath1.Length < AllPath2.Length)
+                {
                     Download(AllPath1, AllPath2, path1, path2);
+                    Console.WriteLine("one");
+                }
                 else
+                {
                     Download(AllPath2, AllPath1, path2, path1);
+                    Console.WriteLine("two");
+                }
             }
             catch(Exception ex)
             {
@@ -83,10 +89,31 @@ namespace TestImageCompare
                 }
             }
 #elif !Debug
-            Bitmap Bmp1 = new Bitmap(path1 + "\\" + AllPath1[0], true); 
-            Bitmap Bmp2 = new Bitmap(path2 + "\\" + AllPath2[0], true);
-            if(!Equality(Bmp1, Bmp2))
-                Console.WriteLine(true);
+
+            Bitmap Bmp2=null;
+            for (int j = 0; j < AllPath1.Length; j++)
+            {
+
+                bool flag = true;
+                Bitmap Bmp1 = new Bitmap(path1 + "\\" + AllPath1[j], true);
+                for (int i = 0; i < AllPath2.Length; i++)
+                {
+
+                    Bmp2 = new Bitmap(path2 + "\\" + AllPath2[i], true);
+                    if (Equality(Bmp1, Bmp2))
+                    { 
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag)
+                {
+                    Bmp1.Dispose();
+                    Console.WriteLine(path1 + "\\" + AllPath1[j]);
+                    File.Move(path1 + "\\" + AllPath1[j], path2 + "\\" + AllPath1[j]);
+                }
+            }
+ 
 #endif
         }
 
