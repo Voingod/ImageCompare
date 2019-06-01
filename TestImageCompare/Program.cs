@@ -13,25 +13,23 @@ namespace TestImageCompare
         {
             try
             {
-                string path1 = @"D:\Test1";
-                string path2 = @"D:\Test1\Test2";
+                Console.Write("Enter the first path to directory with images: ");
+                string pathToDirctoryIn = Console.ReadLine();
+                Console.Write("Enter the second path to directory with images: ");
+                string pathToDirctoryOut = Console.ReadLine();
 
-                //string path1 = @"D:\ХВидео\Катя\";
-                //string path2 = @"D:\ХВидео\Катя\Катя";
+                Console.WriteLine("\nProgram is working\n");
 
-                var AllPath1 = new DirectoryInfo(path1).GetFiles();
-                var AllPath2 = new DirectoryInfo(path2).GetFiles();
+                var ImageNamesIn = new DirectoryInfo(pathToDirctoryIn).GetFiles();
+                var ImageNamesOut = new DirectoryInfo(pathToDirctoryOut).GetFiles();
 
-                if (AllPath1.Length < AllPath2.Length)
-                {
-                    Download(AllPath1, AllPath2, path1, path2);
-                    Console.WriteLine("one");
-                }
+                if (ImageNamesIn.Length < ImageNamesOut.Length)
+                    Download(ImageNamesIn, ImageNamesOut, pathToDirctoryIn, pathToDirctoryOut);
                 else
-                {
-                    Download(AllPath2, AllPath1, path2, path1);
-                    Console.WriteLine("two");
-                }
+                    Download(ImageNamesOut, ImageNamesIn, pathToDirctoryOut, pathToDirctoryIn);
+
+                Console.WriteLine();
+                Console.WriteLine("Finish");
             }
             catch(Exception ex)
             {
@@ -41,7 +39,6 @@ namespace TestImageCompare
             }
             Console.ReadLine();
         }
-
 
         static bool Equality(Bitmap Bmp1, Bitmap Bmp2)
         {
@@ -66,40 +63,16 @@ namespace TestImageCompare
             }
         }
 
-        static void Download(FileInfo[] AllPath1, FileInfo[] AllPath2, string path1, string path2)
+        static void Download(FileInfo[] pathToDirctoryIn, FileInfo[] pathToDirctoryOut, string ImageNamesIn, string ImageNamesOut)
         {
-#if !Release
-            for (int i=0;i<AllPath1.Length; i++)
-            {
-                Console.Write(i);
-                Bitmap Bmp1 = new Bitmap(path1 + "\\" + AllPath1[i], true);
-                for (int j=0;j<AllPath2.Length;j++)
-                {
-                    Console.WriteLine(j);
-                    Bitmap Bmp2 = new Bitmap(path2 + "\\" + AllPath2[j], true);
-                    if (!Equality(Bmp1, Bmp2))
-                    {
-                        //  Bmp2.Dispose();
-                        //  Bmp1.Dispose();
-                        //Console.WriteLine(path2 + "\\" + AllPath2[j]);
-                        break;
-                       // File.Move(path2 + "\\" + AllPath2[j], path1 + "\\" + AllPath2[j]);
-                    }
-                    
-                }
-            }
-#elif !Debug
-
             Bitmap Bmp2=null;
-            for (int j = 0; j < AllPath1.Length; j++)
+            for (int j = 0; j < pathToDirctoryIn.Length; j++)
             {
-
                 bool flag = true;
-                Bitmap Bmp1 = new Bitmap(path1 + "\\" + AllPath1[j], true);
-                for (int i = 0; i < AllPath2.Length; i++)
+                Bitmap Bmp1 = new Bitmap(ImageNamesIn + "\\" + pathToDirctoryIn[j], true);
+                for (int i = 0; i < pathToDirctoryOut.Length; i++)
                 {
-
-                    Bmp2 = new Bitmap(path2 + "\\" + AllPath2[i], true);
+                    Bmp2 = new Bitmap(ImageNamesOut + "\\" + pathToDirctoryOut[i], true);
                     if (Equality(Bmp1, Bmp2))
                     { 
                         flag = false;
@@ -109,12 +82,10 @@ namespace TestImageCompare
                 if (flag)
                 {
                     Bmp1.Dispose();
-                    Console.WriteLine(path1 + "\\" + AllPath1[j]);
-                    File.Move(path1 + "\\" + AllPath1[j], path2 + "\\" + AllPath1[j]);
+                    Console.WriteLine(ImageNamesIn + "\\" + pathToDirctoryIn[j]);
+                    File.Move(ImageNamesIn + "\\" + pathToDirctoryIn[j], ImageNamesOut + "\\" + pathToDirctoryIn[j]);
                 }
             }
- 
-#endif
         }
 
     }
