@@ -83,7 +83,7 @@ namespace TestImageCompare
                 }
             }
 #elif !Debug
-            Bitmap Bmp1 = new Bitmap(path1 + "\\" + AllPath1[0], true);
+            Bitmap Bmp1 = new Bitmap(path1 + "\\" + AllPath1[0], true); 
             Bitmap Bmp2 = new Bitmap(path2 + "\\" + AllPath2[0], true);
             if(!Equality(Bmp1, Bmp2))
                 Console.WriteLine(true);
