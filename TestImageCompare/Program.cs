@@ -1,6 +1,7 @@
 ﻿#define Release
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -20,13 +21,24 @@ namespace TestImageCompare
 
                 Console.WriteLine("\nProgram is working\n");
 
+                
+
                 var ImageNamesIn = new DirectoryInfo(pathToDirctoryIn).GetFiles();
                 var ImageNamesOut = new DirectoryInfo(pathToDirctoryOut).GetFiles();
 
-                if (ImageNamesIn.Length < ImageNamesOut.Length)
-                    Download(ImageNamesIn, ImageNamesOut, pathToDirctoryIn, pathToDirctoryOut);
+                string[] ImageIn = new string[ImageNamesIn.Length];
+                string[] ImageOut = new string[ImageNamesOut.Length];
+
+                for (int i = 0; i < ImageIn.Length; i++)
+                    ImageIn[i] = ImageNamesIn[i].ToString();
+                for (int i = 0; i < ImageOut.Length; i++)
+                    ImageOut[i] = ImageNamesOut[i].ToString();                
+
+
+                if (ImageIn.Length < ImageOut.Length)
+                    Download(ImageIn, ImageOut, pathToDirctoryIn, pathToDirctoryOut);
                 else
-                    Download(ImageNamesOut, ImageNamesIn, pathToDirctoryOut, pathToDirctoryIn);
+                    Download(ImageOut, ImageIn, pathToDirctoryOut, pathToDirctoryIn);
 
                 Console.WriteLine();
                 Console.WriteLine("Finish");
@@ -46,7 +58,7 @@ namespace TestImageCompare
             {
                 for (int i = 0; i < Bmp1.Width; i++)
                 {
-                    for (int j = Bmp1.Width; j < Bmp1.Height; j++)
+                    for (int j = 0; j < Bmp1.Height; j++)
                     {
                         if (Bmp1.GetPixel(i, j) != Bmp2.GetPixel(i, j))
                         {
@@ -63,27 +75,44 @@ namespace TestImageCompare
             }
         }
 
-        static void Download(FileInfo[] pathToDirctoryIn, FileInfo[] pathToDirctoryOut, string ImageNamesIn, string ImageNamesOut)
+        static void Download(string[] pathToDirctoryIn, string[] pathToDirctoryOut, string ImageNamesIn, string ImageNamesOut)
         {
             Bitmap Bmp2=null;
             for (int j = 0; j < pathToDirctoryIn.Length; j++)
             {
-                bool flag = true;
+                Console.Write(ImageNamesIn + "\\" + pathToDirctoryIn[j]);
+                bool flag = false;
+                
                 Bitmap Bmp1 = new Bitmap(ImageNamesIn + "\\" + pathToDirctoryIn[j], true);
                 for (int i = 0; i < pathToDirctoryOut.Length; i++)
                 {
+                    Console.WriteLine(" "+ImageNamesOut + "\\" + pathToDirctoryOut[i]);
                     Bmp2 = new Bitmap(ImageNamesOut + "\\" + pathToDirctoryOut[i], true);
                     if (Equality(Bmp1, Bmp2))
-                    { 
-                        flag = false;
-                        break;
+                    {
+                        
+                        Console.WriteLine(" "+true, Console.ForegroundColor = ConsoleColor.Green);
+                        Console.ResetColor();
+                        flag = true;
+                        //continue;
+                          break;
                     }
+                    else
+                    {
+                        Console.WriteLine(" " + false, Console.ForegroundColor = ConsoleColor.Red);
+                        Console.ResetColor();
+                    }
+                       
                 }
-                if (flag)
+                Console.WriteLine(flag);
+                Console.WriteLine();
+                if (!flag)
                 {
+                    string data = DateTime.Now.Millisecond.ToString();
                     Bmp1.Dispose();
-                    Console.WriteLine(ImageNamesIn + "\\" + pathToDirctoryIn[j]);
-                    File.Move(ImageNamesIn + "\\" + pathToDirctoryIn[j], ImageNamesOut + "\\" + pathToDirctoryIn[j]);
+                    File.Move(ImageNamesIn + "\\" + pathToDirctoryIn[j], ImageNamesOut + "\\" + data + pathToDirctoryIn[j]);
+                    Console.WriteLine("Moving: "+ImageNamesIn + "\\" + pathToDirctoryIn[j], Console.ForegroundColor = ConsoleColor.Blue);
+                    Console.ResetColor();
                 }
             }
         }
